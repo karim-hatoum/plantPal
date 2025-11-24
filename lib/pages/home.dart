@@ -12,6 +12,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String? _selectedPlant;
+
+  List get _filteredPlants {
+    if (_selectedPlant == null || _selectedPlant == "View All") {
+      return plants;
+    }
+    return plants.where((p) => p.name == _selectedPlant).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,18 +39,25 @@ class _HomePageState extends State<HomePage> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 25.0),
-          const MyDropdownMenu(),
+          MyDropdownMenu(
+            selectedValue: _selectedPlant ?? "View All",
+            onChanged: (value) {
+              setState(() {
+                _selectedPlant = value;
+              });
+            },
+          ),
           const SizedBox(height: 50.0),
-          // Display all plant cards
+          // Display filtered plant cards
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: ListView.builder(
-                itemCount: plants.length,
+                itemCount: _filteredPlants.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 16.0),
-                    child: PlantCard(plant: plants[index]),
+                    child: PlantCard(plant: _filteredPlants[index]),
                   );
                 },
               ),
